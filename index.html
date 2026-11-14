@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1E1A4D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="תדריך בדרך">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>תדריך בדרך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Rubik:wght@600;800&display=swap" rel="stylesheet">
+<style>
+/* Direction: bright lavender field, deep indigo type, coral action, four pastel week colors. One column, large touch targets. */
+:root {
+  --bg: #F3EFFF; --surface: #FFFFFF; --ink: #1E1A4D; --muted: #5B5787; --line: #D9D2F5;
+  --accent: #FF6B63; --on-accent: #1E1A4D; --danger: #1E1A4D; --on-danger: #FFFFFF;
+  --w0: #FF9E96; --w1: #7FE3C6; --w2: #FFD472; --w3: #B9AAFF; --on-week: #1E1A4D;
+  --font-display: "Rubik", "Heebo", system-ui, sans-serif;
+  --font-body: "Heebo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14112F; --surface: #1E1A4A; --ink: #F1EEFF; --muted: #ABA5D8; --line: #373170;
+    --accent: #FF7A72; --danger: #F1EEFF; --on-danger: #14112F; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14112F; --surface: #1E1A4A; --ink: #F1EEFF; --muted: #ABA5D8; --line: #373170;
+  --accent: #FF7A72; --danger: #F1EEFF; --on-danger: #14112F; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.5;
+  -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
+}
+#app {
+  max-width: 560px; margin: 0 auto; min-height: 100%;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  display: flex; flex-direction: column; gap: 20px;
+}
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.2; }
+h1 { font-size: 28px; font-weight: 800; }
+h2 { font-size: 26px; font-weight: 800; }
+h3 { font-size: 18px; font-weight: 600; }
+p { margin: 0; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sub { color: var(--muted); font-size: 15px; margin-top: 2px; }
+
+.seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; flex: none; }
+.seg button { background: transparent; color: var(--ink); border: 0; padding: 8px 14px; font: 600 15px var(--font-body); cursor: pointer; min-height: 40px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+.hero { border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 12px; color: var(--on-week); }
+.hero.w0, .player.w0 { background: var(--w0); }
+.hero.w1, .player.w1 { background: var(--w1); }
+.hero.w2, .player.w2 { background: var(--w2); }
+.hero.w3, .player.w3 { background: var(--w3); }
+.eyebrow { font-size: 14px; font-weight: 700; letter-spacing: .02em; }
+.meta { font-size: 15px; font-weight: 500; }
+.safety { font-size: 14px; font-weight: 500; opacity: .9; }
+
+.btn { font: 700 17px var(--font-body); min-height: 52px; padding: 12px 20px; border-radius: 16px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--ink); }
+.btn.ghost { background: transparent; }
+.btn.danger { background: var(--danger); color: var(--on-danger); }
+.btn.big { min-height: 68px; font-size: 20px; border-radius: 20px; }
+.btn:focus-visible, .seg button:focus-visible, .tile:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.hero .btn.primary { box-shadow: 0 4px 0 var(--ink); }
+.hero .btn.primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+.program { display: flex; flex-direction: column; gap: 14px; }
+.week { display: flex; flex-direction: column; gap: 8px; }
+.week-h { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.dot.w0 { background: var(--w0); } .dot.w1 { background: var(--w1); } .dot.w2 { background: var(--w2); } .dot.w3 { background: var(--w3); }
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.tile { border: 2px solid transparent; border-radius: 14px; padding: 8px 4px; min-height: 92px; color: var(--on-week); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; font-family: var(--font-body); }
+.tile.w0 { background: var(--w0); } .tile.w1 { background: var(--w1); } .tile.w2 { background: var(--w2); } .tile.w3 { background: var(--w3); }
+.tile.is-done { border-color: var(--ink); }
+.tile-n { font: 800 20px var(--font-display); }
+.tile-t { font-size: 11px; line-height: 1.2; font-weight: 500; overflow-wrap: anywhere; }
+.tile-m { font-size: 12px; font-weight: 700; margin-top: auto; }
+@media (max-width: 380px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
+
+.testbox { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--muted); }
+.check input { width: 22px; height: 22px; flex: none; accent-color: var(--accent); margin-top: 2px; }
+.foot { font-size: 14px; color: var(--muted); }
+.script { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+.script summary { cursor: pointer; font-weight: 700; }
+.script p { margin-top: 10px; max-width: 65ch; }
+.notice { background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; padding: 12px 14px; }
+
+.rate { display: flex; flex-direction: column; gap: 8px; }
+.rate-l { font-weight: 700; }
+.rate-b { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.rate-b button { min-height: 56px; border-radius: 14px; border: 2px solid var(--ink); background: var(--surface); color: var(--ink); font: 800 20px var(--font-display); cursor: pointer; }
+.rate-b button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+
+.player { flex: 1; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 18px; color: var(--on-week); text-align: center; }
+.ring-wrap { position: relative; width: min(64vw, 280px); aspect-ratio: 1; }
+.ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(30, 26, 77, .18); stroke-width: 9; }
+.ring-fg { fill: none; stroke: var(--on-week); stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset .25s linear; }
+.ring-num { position: absolute; inset: 0; display: grid; place-items: center; font: 800 clamp(52px, 18vw, 88px) var(--font-display); font-variant-numeric: tabular-nums; }
+.bar { width: 100%; height: 8px; border-radius: 99px; background: rgba(30, 26, 77, .18); overflow: hidden; }
+.bar span { display: block; height: 100%; width: 0; background: var(--on-week); transition: width .3s; }
+.pl-text { min-height: 1.5em; font-size: 16px; max-width: 40ch; }
+.pl-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (prefers-reduced-motion: reduce) { .ring-fg, .bar span { transition: none; } .btn:active { transform: none !important; } }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+/* Program data and session builder. No DOM access in this file. */
+const WEEKS = {
+  he: [`מבנה`, `מסירה`, `עמידות בלחץ`, `שילוב`],
+  en: [`Structure`, `Delivery`, `Composure under pressure`, `Integration`]
+};
+
+const TXT = {
+  he: {
+    intro: (n, t) => `יום ${n}. ${t}. העיניים על הכביש. המושב הזה כולו בקול, ואין צורך לגעת במסך. כשתחנה, תוכל לדרג את עצמך.`,
+    breathIntro: `נתחיל בנשימה. שלוש נשימות איטיות.`,
+    inhale: `שאף דרך האף.`,
+    exhale: `נשוף לאט.`,
+    drillA: `תרגיל ראשון.`,
+    drillB: `תרגיל שני.`,
+    drillC: `סיבוב שלישי. חזור על התרגיל הראשון, והפעם יישם את מה ששמת לב אליו.`,
+    focus: `נקודה לתשומת לב. `,
+    phrase: `המשפט של היום. אמור אותו פעמיים, בקול ברור. `,
+    close: `המושב הסתיים. כשתחנה, פתח את האפליקציה ודרג את עצמך במבנה, במסירה ובעמידות. עבודה טובה.`,
+    qaIntro: `חמש שאלות מהירות. אקריא כל שאלה, ואחריה יש לך שלושים שניות לענות.`
+  },
+  en: {
+    intro: (n, t) => `Day ${n}. ${t}. Eyes on the road. This session is audio only, and you do not need to touch the screen. When you park, you can rate yourself.`,
+    breathIntro: `We start with breath. Three slow breaths.`,
+    inhale: `Breathe in through your nose.`,
+    exhale: `Breathe out slowly.`,
+    drillA: `First drill.`,
+    drillB: `Second drill.`,
+    drillC: `Round three. Repeat the first drill, now applying what you just noticed.`,
+    focus: `One thing to notice. `,
+    phrase: `Today's phrase. Say it twice, clearly. `,
+    close: `Session complete. When you have parked, open the app and rate yourself on structure, delivery and composure. Good work.`,
+    qaIntro: `Five rapid questions. I will read each one, and you have thirty seconds to answer.`
+  }
+};
+
+const DAYS = [
+  /* ---------- Week 1: Structure ---------- */
+  { n: 1, w: 0, he: {
+      title: `המסקנה קודם`,
+      concept: `בתדריך לבכירים פותחים במסקנה. משפט אחד שאומר מה קרה, מה אתה ממליץ ומה אתה צריך מהם. את הפרטים מוסיפים רק אחרי שהמסקנה נאמרה.`,
+      a: `בחר נושא אחד שמטריד אותך בעבודה השבוע. אמור בקול משפט אחד: המסקנה והבקשה.`,
+      b: `עכשיו תדריך של שלושה משפטים על אותו נושא: מסקנה, הנימוק המרכזי והבקשה.`,
+      focus: `האם המשפט הראשון שלך כבר נשא את המסקנה?`,
+      phrase: `בשורה התחתונה, ואני מבקש החלטה.` },
+    en: {
+      title: `Bottom line first`,
+      concept: `With senior leaders, open with the conclusion. One sentence that says what happened, what you recommend and what you need from them. Details come only after the bottom line is out.`,
+      a: `Pick one issue on your mind at work this week. Say one sentence aloud: the conclusion and the ask.`,
+      b: `Now a three-sentence briefing on the same issue: conclusion, main reason, and the ask.`,
+      focus: `Did your first sentence already carry the conclusion?`,
+      phrase: `The bottom line is this, and I need one decision from you.` } },
+
+  { n: 2, w: 0, he: {
+      title: `שלוש נקודות`,
+      concept: `מי שמקשיב שומר שלוש נקודות בקלות. ארבע כבר מטשטשות. כשאתה מנמק, בחר שלוש סיבות ותן לכל אחת כותרת של מילה או שתיים.`,
+      a: `בחר החלטה שאתה שוקל. תן שלוש סיבות בעדה, כל אחת עם כותרת קצרה.`,
+      b: `עכשיו הפוך. שלוש סיבות נגד, ואחר כך משפט סיכום אחד שמכריע.`,
+      focus: `האם אמרת בפירוש: ראשון, שני, שלישי?`,
+      phrase: `יש שלוש סיבות. הראשונה, השנייה והשלישית.` },
+    en: {
+      title: `Rule of three`,
+      concept: `A listener holds three points easily; four start to blur. When you justify something, choose three reasons and give each a label of one or two words.`,
+      a: `Pick a decision you are weighing. Give three reasons for it, each with a short label.`,
+      b: `Now reverse it. Three reasons against, then one closing sentence that decides.`,
+      focus: `Did you say out loud: first, second, third?`,
+      phrase: `There are three reasons. First, second, and third.` } },
+
+  { n: 3, w: 0, he: {
+      title: `עקרון הפירמידה`,
+      concept: `עקרון הפירמידה: תשובה בראש, מתחתיה קבוצות של טיעונים, ומתחתן הנתונים. הבכיר יורד לעומק כמה שהוא רוצה, ואתה לא מכריח אותו לעבור על הכול.`,
+      a: `תאר בשישים שניות את המצב האסטרטגי של היחידה שלך. פתח בתשובה במשפט אחד לשאלה: איפה אנחנו עומדים.`,
+      b: `עכשיו הפוך את הסדר בכוונה. התחל מהנתונים. שים לב איך זה מרגיש, ואז חזור לסדר הנכון.`,
+      focus: `האם הנתונים הגיעו בסוף ולא בהתחלה?`,
+      phrase: `התשובה הקצרה היא זו. אפשר להעמיק בכל חלק.` },
+    en: {
+      title: `The pyramid`,
+      concept: `The pyramid principle: the answer on top, supporting arguments grouped beneath it, data beneath those. The senior listener goes as deep as he wants, and you never force him through everything.`,
+      a: `In sixty seconds, describe the strategic situation of your unit. Open with a one-sentence answer to: where do we stand?`,
+      b: `Now deliberately reverse the order. Start from the data. Notice how it feels, then return to the right order.`,
+      focus: `Did the data arrive last, not first?`,
+      phrase: `The short answer is this. I can go deeper on any part.` } },
+
+  { n: 4, w: 0, he: {
+      title: `אז מה`,
+      concept: `עובדה בלי משמעות היא חצי תדריך. אחרי כל עובדה הוסף את המשפט שמסביר למה זה משנה לו. עובדה, משמעות, ואז הלאה.`,
+      a: `קח שלוש עובדות מהשבוע שלך. לכל אחת אמור את העובדה ומשפט משמעות.`,
+      b: `בחר עובדה אחת ותן לה שתי משמעויות: אחת לטווח קצר ואחת לטווח ארוך.`,
+      focus: `האם כל משפט משמעות התחיל בסימן ברור, כמו: ולכן, או: משמעות הדבר?`,
+      phrase: `משמעות הדבר היא ש...` },
+    en: {
+      title: `So what`,
+      concept: `A fact without meaning is half a briefing. After each fact, add the sentence that explains why it matters to him. Fact, implication, move on.`,
+      a: `Take three facts from your week. For each, state the fact and one implication sentence.`,
+      b: `Pick one fact and give it two implications: one short-term and one long-term.`,
+      focus: `Did each implication start with a clear marker, like therefore, or which means?`,
+      phrase: `Which means that...` } },
+
+  { n: 5, w: 0, secs: [210, 150, 90], he: {
+      title: `דחיסה`,
+      concept: `אותו תדריך בשלושה אורכים: שלושים שניות, דקה ושתי דקות. הכישור הוא לדעת מה שורד כשחותכים. מה ששורד הוא העיקר.`,
+      a: `בחר נושא. אמור אותו בשלושים שניות, אחר כך בדקה, ואחר כך בשתי דקות, ברצף.`,
+      b: `נושא אחר. תדריך של שתי דקות, ובסופו אמור בקול איזה משפט אחד אפשר היה לחתוך.`,
+      focus: `מה הדבר האחד שלא היית מוותר עליו?`,
+      phrase: `בקצרה, זה מה שחשוב.` },
+    en: {
+      title: `Compression`,
+      concept: `The same briefing in three lengths: thirty seconds, one minute, two minutes. The skill is knowing what survives cutting. What survives is the point.`,
+      a: `Pick a topic. Say it in thirty seconds, then in one minute, then in two, back to back.`,
+      b: `A different topic. Give a two-minute briefing, then say aloud which single sentence you could have cut.`,
+      focus: `What was the one thing you would never cut?`,
+      phrase: `In short, this is what matters.` } },
+
+  /* ---------- Week 2: Delivery ---------- */
+  { n: 6, w: 1, he: {
+      title: `כוחה של הפסקה`,
+      concept: `שקט הוא כלי ולא טעות. הפסקה של שנייה אחרי משפט מרכזי נותנת לו משקל, ונותנת לך זמן לחשוב. התרגיל: במקום למלא, עצור.`,
+      a: `תאר את סדר היום שלך מחר. אחרי כל משפט, עצור וספור אחת בראש.`,
+      b: `תדריך של דקה על נושא עבודה, עם הפסקה גלויה לפני המשפט החשוב ביותר.`,
+      focus: `האם ההפסקות הרגישו לך ארוכות, ובכל זאת טבעיות?`,
+      phrase: `הנקודה החשובה ביותר היא... ואחריה הפסקה.` },
+    en: {
+      title: `The power of a pause`,
+      concept: `Silence is a tool, not a mistake. A one-second pause after a key sentence gives it weight and gives you time to think. The drill: instead of filling, stop.`,
+      a: `Describe tomorrow's schedule. After every sentence, pause and silently count one.`,
+      b: `A one-minute work briefing with a visible pause before the single most important sentence.`,
+      focus: `Did the pauses feel long to you, yet natural?`,
+      phrase: `The most important point is... and then a pause.` } },
+
+  { n: 7, w: 1, he: {
+      title: `בלי מילות מילוי`,
+      concept: `אה, כאילו, בעצם. מילות מילוי נולדות מפחד משקט. כשאתה מרגיש שאחת מגיעה, סגור את הפה ונשום. הדרך להיפטר מהן היא להבחין בהן.`,
+      a: `דבר דקה וחצי על מה שעשית אתמול. בכל פעם שאתה שומע מילת מילוי, עצור והתחל את המשפט מחדש.`,
+      b: `אותו נושא, והפעם בלי התחלות מחדש. המטרה: מילת מילוי אחת לכל היותר.`,
+      focus: `איזו מילת מילוי חוזרת אצלך הכי הרבה?`,
+      phrase: `שנייה, אני חושב. כן.` },
+    en: {
+      title: `No fillers`,
+      concept: `Uh, like, basically, you know. Fillers are born from fear of silence. When you feel one coming, close your mouth and breathe. The way to lose them is to notice them.`,
+      a: `Speak for a minute and a half about what you did yesterday. Each time you hear a filler, stop and restart the sentence.`,
+      b: `Same topic, and this time no restarts. Goal: at most one filler.`,
+      focus: `Which filler word comes back most often for you?`,
+      phrase: `Let me think for a second. Yes.` } },
+
+  { n: 8, w: 1, he: {
+      title: `טון יורד ואנרגיה`,
+      concept: `בסוף משפט הטון יורד כשאתה בטוח ועולה כשאתה שואל. משפט שנגמר בעלייה נשמע כמו בקשת אישור. הנמך את הטון בסוף כל קביעה.`,
+      a: `אמור חמש קביעות על העבודה שלך, וכל אחת מסתיימת בטון יורד וברור.`,
+      b: `תדריך של דקה באנרגיה גבוהה בעשרים אחוז מהרגיל, כאילו החדר גדול מהרגיל.`,
+      focus: `האם זה הרגיש לך מוגזם? בדרך כלל זה בדיוק הנכון.`,
+      phrase: `זו ההמלצה שלי.` },
+    en: {
+      title: `Falling pitch and energy`,
+      concept: `At the end of a sentence, pitch falls when you are sure and rises when you ask. A statement that ends upward sounds like asking permission. Let your pitch fall at the end of every statement.`,
+      a: `State five facts about your work, each ending with a clear falling pitch.`,
+      b: `A one-minute briefing at twenty percent more energy than usual, as if the room were bigger.`,
+      focus: `Did it feel exaggerated? That is usually exactly right.`,
+      phrase: `That is my recommendation.` } },
+
+  { n: 9, w: 1, he: {
+      title: `דיוק`,
+      concept: `מילים מעורפלות מחלישות סמכות: בערך, די, כנראה, אולי. החלף כל אחת במספר, בשם או בתאריך. אם אינך יודע, אמור שאינך יודע.`,
+      a: `תאר פרויקט שאתה מנהל. כל משפט חייב לכלול מספר, שם או תאריך.`,
+      b: `אותו תיאור, ועכשיו עם שלושה מקומות שבהם אתה אומר במפורש מה אינך יודע ומתי תדע.`,
+      focus: `כמה פעמים נשמעה המילה: בערך?`,
+      phrase: `הנתון הוא... נכון לתאריך...` },
+    en: {
+      title: `Precision`,
+      concept: `Vague words weaken authority: roughly, fairly, probably, sort of. Replace each with a number, a name or a date. If you do not know, say that you do not know.`,
+      a: `Describe a project you run. Every sentence needs a number, a name or a date.`,
+      b: `Same description, now with three places where you say explicitly what you do not know and when you will.`,
+      focus: `How often did you hear roughly or sort of?`,
+      phrase: `The figure is..., as of...` } },
+
+  { n: 10, w: 1, he: {
+      title: `דימוי אחד`,
+      concept: `דימוי אחד זכור יותר מעשרה נתונים. בחר דימוי קצר או מקרה אחד שנושא את הרעיון. משפט או שניים, לא יותר.`,
+      a: `הסבר רעיון אסטרטגי מורכב דרך דימוי אחד מחיי היומיום.`,
+      b: `ספר מקרה אמיתי אחד מהקריירה שלך שממחיש עיקרון, בשתי דקות: מצב, פעולה, תוצאה.`,
+      focus: `האם הדימוי נשא את עצמו, או שהיית צריך להסביר אותו?`,
+      phrase: `תחשוב על זה כמו...` },
+    en: {
+      title: `One image`,
+      concept: `One image outlasts ten statistics. Choose a short image or a single case that carries the idea. A sentence or two, no more.`,
+      a: `Explain a complex strategic idea through one everyday image.`,
+      b: `Tell one real case from your career that illustrates a principle, in two minutes: situation, action, result.`,
+      focus: `Did the image carry itself, or did you have to explain it?`,
+      phrase: `Think of it like...` } },
+
+  /* ---------- Week 3: Composure under pressure ---------- */
+  { n: 11, w: 2, he: {
+      title: `שאלה עוינת`,
+      concept: `שאלה עוינת היא הזדמנות. הפרוטוקול: עצור, נשום, חזור על השאלה בקצרה בניסוח ניטרלי, ואז ענה. הפסקה אחת קונה לך שליטה.`,
+      a: `דמיין שבכיר אומר לך: התוכנית הזאת נשמעת תיאורטית ולא ישימה. עצור, נטרל את הניסוח, וענה.`,
+      b: `עכשיו הוא שואל: למה לא עשיתם את זה קודם? ענה בלי להתגונן.`,
+      focus: `האם התחלת בהגנה או בתשובה?`,
+      phrase: `זו שאלה הוגנת.` },
+    en: {
+      title: `The hostile question`,
+      concept: `A hostile question is an opening. The protocol: pause, breathe, restate it briefly in neutral wording, then answer. One pause buys you control.`,
+      a: `Imagine a senior leader says to you: this sounds theoretical and unworkable. Pause, neutralize the wording, and answer.`,
+      b: `Now he asks: why didn't you do this earlier? Answer without defending.`,
+      focus: `Did you begin with defense, or with an answer?`,
+      phrase: `That is a fair question.` } },
+
+  { n: 12, w: 2, he: {
+      title: `אין לי תשובה`,
+      concept: `לא יודע הוא משפט שלם רק כשהוא ממשיך. את זה אין לי כרגע, ואחזור אליך עד מחר בצהריים. כל פער בידע חוזר עם מחויבות.`,
+      a: `שלוש שאלות שאין לך עליהן תשובה. בכל אחת אמור: את זה אין לי, זה מה שכן ידוע, ואחזור אליך עד...`,
+      b: `ענה על שאלה שאתה יודע רק חלקית. הפרד בבירור בין מה שידוע, מה שמוערך ומה שלא ידוע.`,
+      focus: `האם הקול שלך נשאר יציב כשאמרת שאינך יודע?`,
+      phrase: `את זה אין לי עדיין. אחזור אליך עד...` },
+    en: {
+      title: `I don't have that`,
+      concept: `I do not know is a complete sentence only when it continues. I do not have that right now, and I will come back to you by tomorrow noon. Every gap comes back with a commitment.`,
+      a: `Three questions you cannot answer. For each, say: I do not have that, here is what is known, and I will come back to you by...`,
+      b: `Answer a question you know only partly. Separate clearly what is known, what is estimated, and what is unknown.`,
+      focus: `Did your voice stay steady when you said you did not know?`,
+      phrase: `I do not have that yet. I will come back to you by...` } },
+
+  { n: 13, w: 2, he: {
+      title: `הפרעה באמצע`,
+      concept: `מפריעים לך באמצע. אל תאיץ ואל תוותר. אפשר לעצור ולתת לו לסיים ואז לחזור במשפט אחד, או לומר: אסיים את הנקודה ואז אשמע אותך.`,
+      a: `תדריך של דקה. דמיין הפרעה בשנייה העשרים. עצור, ואז חזור בלי להתחיל מחדש.`,
+      b: `עכשיו הפרעה עוינת באמצע משפט. אמור: אסיים את הנקודה ואשמח לשמוע אותך. והמשך בנחת.`,
+      focus: `האם חזרת לנקודה שבה עצרת, או שהתחלת מחדש?`,
+      phrase: `אסיים את הנקודה, ואז אשמח לשמוע אותך.` },
+    en: {
+      title: `Interrupted mid-sentence`,
+      concept: `You are interrupted mid-point. Do not speed up and do not collapse. Either stop, let him finish, and return in one sentence, or say: let me finish this point, then I will take yours.`,
+      a: `A one-minute briefing. Imagine an interruption at the twenty-second mark. Stop, then resume without starting over.`,
+      b: `Now a hostile interruption in the middle of a sentence. Say: let me finish this point, and I will gladly hear you. Then continue calmly.`,
+      focus: `Did you return to the point where you stopped, or did you start over?`,
+      phrase: `Let me finish this point, then I will take yours.` } },
+
+  { n: 14, w: 2, he: {
+      title: `ערעור על ההנחה`,
+      concept: `כשמערערים על ההנחה שלך, הכר במה שנכון בה ואז מסגר מחדש. נכון, ואיך שאני רואה את זה. לא: אבל.`,
+      a: `מישהו אומר: זה לא באחריות היחידה שלך. הכר במה שנכון, ומסגר מחדש.`,
+      b: `מישהו אומר: זו הנחה אופטימית מדי. הגב בשלושים שניות, בלי להתגונן.`,
+      focus: `האם התחלת במילה: כן, או במילה: אבל?`,
+      phrase: `יש בזה משהו נכון, ועם זאת...` },
+    en: {
+      title: `Premise challenged`,
+      concept: `When your premise is challenged, acknowledge what is right in it, then reframe. Yes, and the way I see it. Not: but.`,
+      a: `Someone says: that is not your unit's responsibility. Acknowledge what is right in it, and reframe.`,
+      b: `Someone says: that is an overly optimistic assumption. Respond in thirty seconds, without defending.`,
+      focus: `Did you start with yes, or with but?`,
+      phrase: `There is something right in that, and at the same time...` } },
+
+  { n: 15, w: 2, he: {
+      title: `בשורה רעה כלפי מעלה`,
+      concept: `בשורה רעה עולה למעלה מהר ובפשטות: מה קרה, מה ההשפעה, מה עושים ומה אני צריך. בלי התנצלות ארוכה בהתחלה.`,
+      a: `דווח על כשל, אמיתי או מדומה, בארבעה משפטים לפי הסדר.`,
+      b: `אותו דיווח, והפעם בעשרים שניות בלבד, בקול רגוע ויציב.`,
+      focus: `האם ההתנצלות, אם הייתה, נמשכה פחות משנייה?`,
+      phrase: `יש לי עדכון לא נוח, ויש לו תוכנית.` },
+    en: {
+      title: `Bad news upward`,
+      concept: `Bad news goes upward quickly and plainly: what happened, what the impact is, what we are doing, and what I need. No long apology first.`,
+      a: `Report a failure, real or imagined, in four sentences, in that order.`,
+      b: `Same report, now in only twenty seconds, in a calm and steady voice.`,
+      focus: `Was any apology shorter than a second?`,
+      phrase: `I have an update that is uncomfortable, and it comes with a plan.` } },
+
+  /* ---------- Week 4: Integration ---------- */
+  { n: 16, w: 3, secs: [180, 90, 90], he: {
+      title: `תדריך מלא`,
+      concept: `היום משלבים הכול: מסקנה קודם, שלוש נקודות, משמעות והפסקות. נושא התדריך הוא תוכנית שינוי ליחידה שלך.`,
+      a: `תדריך של שלוש דקות לבכיר על תוכנית שינוי ליחידה שלך: מסקנה, שלוש נקודות, משמעות ובקשה.`,
+      b: `עכשיו הגרסה של דקה אחת, לאותו בכיר, כשיש לו רק את זמן המעלית.`,
+      focus: `איזו משלוש המיומנויות הייתה החזקה היום: מבנה, מסירה או עמידות?`,
+      phrase: `שלוש נקודות, בקשה אחת.` },
+    en: {
+      title: `The full briefing`,
+      concept: `Today we combine everything: conclusion first, three points, implication and pauses. The topic is a change plan for your unit.`,
+      a: `A three-minute briefing for a senior leader on a change plan for your unit: conclusion, three points, implication and ask.`,
+      b: `Now the one-minute version for the same leader, who only has elevator time.`,
+      focus: `Which of the three skills was strongest today: structure, delivery or composure?`,
+      phrase: `Three points, one request.` } },
+
+  { n: 17, w: 3, he: {
+      title: `אותו תדריך באנגלית`,
+      concept: `היום מתרגלים באנגלית: אותם עקרונות, שפה אחרת. משפטים קצרים, פעלים ישירים, והמסקנה קודם.`,
+      a: `דבר באנגלית. תדריך של שתי דקות על נושא עבודה, עם מסקנה קודם ושלוש נקודות.`,
+      b: `דבר באנגלית. ענה על שאלה עוינת: Why should we fund this now? שלושים שניות.`,
+      focus: `האם קצב הדיבור באנגלית היה איטי יותר, ומדויק יותר?`,
+      phrase: `Let me start with the bottom line.` },
+    en: {
+      title: `The same briefing in English`,
+      concept: `Today is an English day: same principles, with the structure carried by short sentences, direct verbs, and the conclusion first.`,
+      a: `Speak in English. A two-minute briefing on a work topic, conclusion first, with three points.`,
+      b: `Speak in English. Answer a hostile question: Why should we fund this now? Thirty seconds.`,
+      focus: `Was your English pace slower, and more precise?`,
+      phrase: `Let me start with the bottom line.` } },
+
+  { n: 18, w: 3, secs: [0, 25, 120], qa: true, he: {
+      title: `שאלות מהירות`,
+      concept: `היום תשובות קצרות תחת קצב. כל תשובה: משפט תשובה, סיבה אחת, ועצירה.`,
+      a: `חמש שאלות מהירות. אקריא כל שאלה, ואחריה יש לך שלושים שניות לענות.`,
+      qa: [`מה הסיכון הגדול ביותר בתוכנית?`, `מה יקרה אם לא נעשה כלום?`, `למה דווקא עכשיו?`, `כמה זה יעלה, ומה נקבל תמורת זה?`, `במה אתה לא בטוח?`],
+      b: `בחר את השאלה הקשה ביותר מבין החמש, וענה עליה שוב בחמש עשרה שניות בלבד.`,
+      focus: `האם כל תשובה התחילה בתשובה עצמה?`,
+      phrase: `התשובה קצרה, והנימוק אחריה.` },
+    en: {
+      title: `Rapid-fire questions`,
+      concept: `Today is short answers under pace. Each answer: the answer sentence, one reason, and stop.`,
+      a: `Five rapid questions. I will read each one, and you have thirty seconds to answer.`,
+      qa: [`What is the biggest risk in the plan?`, `What happens if we do nothing?`, `Why now?`, `What will it cost, and what do we get for it?`, `What are you unsure about?`],
+      b: `Pick the hardest of the five and answer it again in only fifteen seconds.`,
+      focus: `Did each answer begin with the answer itself?`,
+      phrase: `The answer is short, and the reasoning follows.` } },
+
+  { n: 19, w: 3, secs: [180, 90, 90], he: {
+      title: `קהל מחוץ לתחום`,
+      concept: `קהל שאינו מהתחום צריך מסגרת, לא מונחים. פתח במה שחשוב לו, הסבר בשפה פשוטה, ותן דוגמה אחת מוחשית.`,
+      a: `הסבר נושא מקצועי שלך לקהל שאינו מהתחום, בשלוש דקות, בלי מונחים מקצועיים.`,
+      b: `אותו נושא, ומישהו בקהל שואל שאלה אישית ולא פשוטה. ענה בשלווה בשלושים שניות.`,
+      focus: `כמה מונחים מקצועיים חמקו פנימה?`,
+      phrase: `בלשון פשוטה, זה אומר...` },
+    en: {
+      title: `An audience outside the field`,
+      concept: `An audience outside your field needs a frame, not terminology. Open with what matters to them, explain in plain language, and give one concrete example.`,
+      a: `Explain a professional topic of yours to an audience outside the field, in three minutes, with no jargon.`,
+      b: `Same topic, and someone in the audience asks a personal, difficult question. Answer calmly in thirty seconds.`,
+      focus: `How many technical terms slipped in?`,
+      phrase: `In plain terms, this means...` } },
+
+  { n: 20, w: 3, secs: [300, 120, 90], he: {
+      title: `סימולציה סופית`,
+      concept: `היום סימולציה מלאה. חמש דקות של תדריך, ואחריו שלוש שאלות קשות ברצף. הכול ביחד: מבנה, מסירה ועמידות.`,
+      a: `תדריך מלא של חמש דקות לבכיר: מסקנה, שלוש נקודות, משמעות, ובקשה.`,
+      b: `ועכשיו שלוש שאלות קשות ברצף: אחת עוינת, אחת שאין לך עליה תשובה, ואחת שמערערת על ההנחה. ענה על כל אחת בארבעים שניות.`,
+      focus: `מה היית רוצה לשפר בעשרים הימים הבאים?`,
+      phrase: `תודה. אשמח לשאלות.` },
+    en: {
+      title: `Final simulation`,
+      concept: `Today is a full simulation. A five-minute briefing, followed by three hard questions in a row. Everything together: structure, delivery and composure.`,
+      a: `A full five-minute briefing for a senior leader: conclusion, three points, implication, and ask.`,
+      b: `And now three hard questions in a row: one hostile, one you cannot answer, and one that challenges your premise. Answer each in forty seconds.`,
+      focus: `What would you like to improve over the next twenty days?`,
+      phrase: `Thank you. I welcome your questions.` } }
+];
+
+/* Build the ordered step list for a day in a given guide language. */
+function buildSteps(day, L) {
+  const T = TXT[L];
+  const d = day[L];
+  const secs = day.secs || [150, 180, 120];
+  const steps = [];
+  const say = (text, label) => steps.push({ kind: `say`, text, label: label || `listen` });
+  const turn = (sec, label) => steps.push({ kind: `turn`, sec, label: label || `turn` });
+
+  say(T.intro(day.n, d.title), `intro`);
+  say(T.breathIntro, `breath`);
+  for (let i = 0; i < 3; i++) {
+    say(T.inhale, `breath`); steps.push({ kind: `breath`, sec: 4, label: `breath`, quiet: true });
+    say(T.exhale, `breath`); steps.push({ kind: `breath`, sec: 6, label: `breath`, quiet: true });
+  }
+  say(d.concept, `concept`);
+
+  say(T.drillA, `drill`);
+  say(d.a, `drill`);
+  if (day.qa) {
+    d.qa.forEach(q => { say(q, `drill`); turn(30); });
+  } else {
+    turn(secs[0]);
+  }
+  say(T.focus + d.focus, `notice`);
+
+  say(T.drillB, `drill`);
+  say(d.b, `drill`);
+  turn(secs[1]);
+
+  say(T.drillC, `drill`);
+  turn(secs[2]);
+
+  say(T.phrase + d.phrase, `phrase`);
+  turn(25);
+  say(T.close, `close`);
+  return steps;
+}
+
+/* Rough duration in seconds: waits plus spoken text at about 14 characters per second. */
+function estimateSeconds(steps) {
+  return Math.round(steps.reduce((s, st) => s + (st.kind === `say` ? st.text.length / 14 + 1 : st.sec), 0));
+}
+
+if (typeof module !== `undefined`) { module.exports = { WEEKS, TXT, DAYS, buildSteps, estimateSeconds }; }
+
+</script>
+<script>
+/* UI, player and storage. Depends on WEEKS, TXT, DAYS, buildSteps, estimateSeconds from data.js */
+const UI = {
+  he: {
+    app: `תדריך בדרך`, sub: `תרגול ניסוח לבכירים, באודיו בלבד`,
+    next: `הבא בתור`, start: `התחל מושב`, again: `התחל שוב`,
+    safety: `מפעילים לפני שיוצאים לדרך. אין לגעת במסך בזמן נהיגה. המושב כולו בקול.`,
+    guide: `שפת ההנחיה`, program: `התוכנית`, week: `שבוע`, day: `יום`,
+    stop: `עצור`, pause: `השהה`, resume: `המשך`, listen: `מקשיב`, turn: `תורך`, breath: `נשימה`,
+    intro: `פתיחה`, concept: `עיקרון`, drill: `תרגיל`, notice: `שים לב`, phrase: `משפט היום`, close: `סיום`,
+    review: `הערכה אחרי החניה`, reviewHint: `דרג את המושב שסיימת, מ-1 עד 5.`,
+    axes: [`מבנה`, `מסירה`, `עמידות`], save: `שמור`, saved: `נשמר`, skip: `דלג`,
+    back: `חזרה`, script: `קרא את התסריט (בחניה בלבד)`, showText: `הצג טקסט בזמן המושב (בחניה בלבד)`,
+    minutes: `דק׳`, done: `הושלם`, avg: `ממוצע`, noSpeech: `הדפדפן הזה לא תומך בהקראה. פתח את הדף ב-Safari.`,
+    stepOf: (i, n) => `שלב ${i} מתוך ${n}`, sessionDone: `המושב הסתיים`,
+    wake: `המסך נשאר דלוק בזמן המושב כדי שההקראה לא תיפסק.`,
+    test: `בדיקת צליל`, testing: `מנגן...`, testOk: `אם שמעת צפצוף ומשפט, הכול תקין.`,
+    silent: `לא זוהה קול. בדוק: מתג השקט בצד האייפון, עוצמת המדיה, ו-Bluetooth. אם עדיין אין קול, פתח את הדף ישירות ב-Safari ולא בתוך אפליקציית Claude.`
+  },
+  en: {
+    app: `Road Briefing`, sub: `Executive articulation practice, audio only`,
+    next: `Up next`, start: `Start session`, again: `Start again`,
+    safety: `Start before you set off. Do not touch the screen while driving. The session runs entirely by voice.`,
+    guide: `Guide language`, program: `Program`, week: `Week`, day: `Day`,
+    stop: `Stop`, pause: `Pause`, resume: `Resume`, listen: `Listen`, turn: `Your turn`, breath: `Breathe`,
+    intro: `Intro`, concept: `Principle`, drill: `Drill`, notice: `Notice`, phrase: `Phrase of the day`, close: `Wrap-up`,
+    review: `Rate it once you are parked`, reviewHint: `Rate the session you just finished, from 1 to 5.`,
+    axes: [`Structure`, `Delivery`, `Composure`], save: `Save`, saved: `Saved`, skip: `Skip`,
+    back: `Back`, script: `Read the script (parked only)`, showText: `Show text during the session (parked only)`,
+    minutes: `min`, done: `Done`, avg: `Average`, noSpeech: `This browser cannot read text aloud. Open the page in Safari.`,
+    stepOf: (i, n) => `Step ${i} of ${n}`, sessionDone: `Session complete`,
+    wake: `The screen stays on during the session so the voice does not cut out.`,
+    test: `Test sound`, testing: `Playing...`, testOk: `If you heard a beep and a sentence, everything works.`,
+    silent: `No voice detected. Check the silent switch on the side of the iPhone, the media volume, and Bluetooth. If there is still no sound, open the page directly in Safari instead of inside the Claude app.`
+  }
+};
+
+/* ---------- storage (falls back to memory when blocked) ---------- */
+const KEY = `road-briefing-v1`;
+let mem = null;
+function load() {
+  try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch (e) { if (mem) return mem; }
+  return mem || { lang: `he`, showText: false, days: {} };
+}
+function save() { mem = S; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* in-memory only */ } }
+const S = load();
+S.days = S.days || {};
+
+/* ---------- helpers ---------- */
+const $ = (sel) => document.querySelector(sel);
+const app = $(`#app`);
+const t = () => UI[S.lang];
+const fmtMin = (sec) => Math.round(sec / 60);
+function nextDay() { for (const d of DAYS) { if (!(S.days[d.n] && S.days[d.n].done)) return d; } return DAYS[DAYS.length - 1]; }
+function avgOf(r) { return r ? Math.round(((r[0] + r[1] + r[2]) / 3) * 10) / 10 : null; }
+function setDir() { document.documentElement.lang = S.lang; document.documentElement.dir = S.lang === `he` ? `rtl` : `ltr`; }
+
+let view = { name: `home`, day: null };
+
+/* ---------- views ---------- */
+function render() {
+  setDir();
+  if (view.name === `home`) return renderHome();
+  if (view.name === `day`) return renderDay();
+  if (view.name === `review`) return renderReview();
+}
+
+function weekTiles(w) {
+  return DAYS.filter(d => d.w === w).map(d => {
+    const rec = S.days[d.n];
+    const done = rec && rec.done;
+    const a = rec ? avgOf(rec.ratings) : null;
+    return `<button class="tile w${w}${done ? ` is-done` : ``}" data-act="open" data-day="${d.n}" aria-label="${t().day} ${d.n}, ${d[S.lang].title}">
+      <span class="tile-n">${d.n}</span>
+      <span class="tile-t">${d[S.lang].title}</span>
+      <span class="tile-m">${done ? (a ? a.toFixed(1) : t().done) : `&nbsp;`}</span>
+    </button>`;
+  }).join(``);
+}
+
+function renderHome() {
+  const nd = nextDay();
+  const est = fmtMin(estimateSeconds(buildSteps(nd, S.lang)));
+  const doneCount = Object.values(S.days).filter(x => x && x.done).length;
+  app.innerHTML = `
+  <header class="top">
+    <div>
+      <h1>${t().app}</h1>
+      <p class="sub">${t().sub}</p>
+    </div>
+    <div class="seg" role="group" aria-label="${t().guide}">
+      <button data-act="lang" data-lang="he" aria-pressed="${S.lang === `he`}">עברית</button>
+      <button data-act="lang" data-lang="en" aria-pressed="${S.lang === `en`}">English</button>
+    </div>
+  </header>
+
+  <section class="hero w${nd.w}">
+    <p class="eyebrow">${t().next} · ${t().week} ${nd.w + 1} · ${WEEKS[S.lang][nd.w]}</p>
+    <h2>${t().day} ${nd.n}: ${nd[S.lang].title}</h2>
+    <p class="meta">${est} ${t().minutes} · ${doneCount}/20 ${t().done}</p>
+    <button class="btn primary big" data-act="start" data-day="${nd.n}">${t().start}</button>
+    <p class="safety">${t().safety}</p>
+  </section>
+
+  <section class="program">
+    <h3>${t().program}</h3>
+    ${[0, 1, 2, 3].map(w => `
+      <div class="week">
+        <p class="week-h"><span class="dot w${w}"></span>${t().week} ${w + 1} · ${WEEKS[S.lang][w]}</p>
+        <div class="tiles">${weekTiles(w)}</div>
+      </div>`).join(``)}
+  </section>
+
+  <div class="testbox"><button class="btn" data-act="test">${t().test}</button><p id="testout" class="foot"></p></div>
+  <label class="check"><input type="checkbox" id="showText" ${S.showText ? `checked` : ``}> <span>${t().showText}</span></label>
+  <p class="foot">${t().wake}</p>`;
+}
+
+function renderDay() {
+  const d = DAYS.find(x => x.n === view.day);
+  const steps = buildSteps(d, S.lang);
+  const est = fmtMin(estimateSeconds(steps));
+  const script = steps.filter(s => s.kind === `say`).map(s => `<p>${s.text}</p>`).join(``);
+  app.innerHTML = `
+  <header class="top">
+    <button class="btn ghost" data-act="home">${t().back}</button>
+  </header>
+  <section class="hero w${d.w}">
+    <p class="eyebrow">${t().week} ${d.w + 1} · ${WEEKS[S.lang][d.w]}</p>
+    <h2>${t().day} ${d.n}: ${d[S.lang].title}</h2>
+    <p class="meta">${est} ${t().minutes}</p>
+    <button class="btn primary big" data-act="start" data-day="${d.n}">${S.days[d.n] && S.days[d.n].done ? t().again : t().start}</button>
+    <button class="btn ghost" data-act="review" data-day="${d.n}">${t().review}</button>
+    <p class="safety">${t().safety}</p>
+  </section>
+  <details class="script"><summary>${t().script}</summary>${script}</details>`;
+}
+
+function renderReview() {
+  const d = DAYS.find(x => x.n === view.day);
+  const cur = (S.days[d.n] && S.days[d.n].ratings) || [0, 0, 0];
+  view.tmp = view.tmp || cur.slice();
+  app.innerHTML = `
+  <header class="top"><button class="btn ghost" data-act="home">${t().back}</button></header>
+  <section class="hero w${d.w}">
+    <p class="eyebrow">${t().day} ${d.n} · ${d[S.lang].title}</p>
+    <h2>${t().review}</h2>
+    <p class="meta">${t().reviewHint}</p>
+    ${t().axes.map((ax, i) => `
+      <div class="rate">
+        <p class="rate-l" id="ax${i}">${ax}</p>
+        <div class="rate-b" role="group" aria-labelledby="ax${i}">
+          ${[1, 2, 3, 4, 5].map(n => `<button data-act="rate" data-ax="${i}" data-v="${n}" aria-pressed="${view.tmp[i] === n}">${n}</button>`).join(``)}
+        </div>
+      </div>`).join(``)}
+    <button class="btn primary big" data-act="saveReview" data-day="${d.n}">${t().save}</button>
+  </section>`;
+}
+
+/* ---------- audio: speech, beeps, wake lock ---------- */
+/* iPhone: Web Audio is muted by the silent switch unless the page holds a "playback" audio session.
+   Declare it, and also loop a silent <audio> element, which makes iOS treat the page as media playback. */
+let silentEl = null;
+function unlockAudio() {
+  try { if (navigator.audioSession) navigator.audioSession.type = `playback`; } catch (e) { /* unsupported */ }
+  try {
+    if (!silentEl) {
+      const rate = 8000, n = rate; // one second of silence
+      const buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+      const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+      w(0, `RIFF`); v.setUint32(4, 36 + n, true); w(8, `WAVE`); w(12, `fmt `); v.setUint32(16, 16, true);
+      v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate, true);
+      v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, `data`); v.setUint32(40, n, true);
+      new Uint8Array(buf, 44).fill(128);
+      silentEl = new Audio(URL.createObjectURL(new Blob([buf], { type: `audio/wav` })));
+      silentEl.loop = true; silentEl.volume = 0.01;
+    }
+    const pr = silentEl.play(); if (pr && pr.catch) pr.catch(() => {});
+  } catch (e) { /* audio blocked */ }
+}
+function releaseAudio() { try { if (silentEl) silentEl.pause(); } catch (e) { /* ignore */ } }
+
+let actx = null;
+function beep(freq, ms) {
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === `suspended`) actx.resume();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.frequency.value = freq; o.type = `sine`;
+    g.gain.setValueAtTime(0.0001, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.25, actx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + ms / 1000);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + ms / 1000 + 0.05);
+  } catch (e) { /* audio blocked */ }
+}
+
+function pickVoice(lang) {
+  const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+  const pref = lang.startsWith(`he`) ? [`he-IL`, `he`] : [`en-US`, `en-GB`, `en`];
+  for (const p of pref) { const v = vs.find(x => x.lang && x.lang.replace(`_`, `-`).startsWith(p)); if (v) return v; }
+  return null;
+}
+
+let lastSpeechStarted = false;
+function utter(text, lang) {
+  return new Promise(resolve => {
+    let finished = false, timer = null, probe = null, started = false;
+    const fin = () => { if (!finished) { finished = true; clearTimeout(timer); clearTimeout(probe); resolve(); } };
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang; u.rate = 0.92;
+      const v = pickVoice(lang); if (v) u.voice = v;
+      u.onstart = () => { started = true; lastSpeechStarted = true; };
+      u.onend = fin; u.onerror = fin;
+      probe = setTimeout(() => { if (!started) { lastSpeechStarted = false; warnSilent(); } }, 3000);
+      timer = setTimeout(fin, text.length * 110 + 4000);
+      speechSynthesis.speak(u);
+    } catch (e) { fin(); }
+  });
+}
+function warnSilent() {
+  if (document.querySelector(`.notice`)) return;
+  app.insertAdjacentHTML(`afterbegin`, `<p class="notice" role="alert">${t().silent}</p>`);
+}
+
+/* Split on sentence ends, and choose the voice per chunk by script (Hebrew letters or not). */
+function chunksOf(text) { return (text.match(/[^.!?…]+[.!?…]?/g) || [text]).map(s => s.trim()).filter(Boolean); }
+const isHe = (s) => /[֐-׿]/.test(s);
+
+let wakeLock = null;
+async function lockScreen() { try { if (navigator.wakeLock) wakeLock = await navigator.wakeLock.request(`screen`); } catch (e) { wakeLock = null; } }
+function unlockScreen() { try { if (wakeLock) wakeLock.release(); } catch (e) { /* ignore */ } wakeLock = null; releaseAudio(); }
+document.addEventListener(`visibilitychange`, () => { if (document.visibilityState === `visible` && P && P.running) lockScreen(); });
+
+/* ---------- player ---------- */
+let P = null;
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+function renderPlayer(d) {
+  setDir();
+  app.innerHTML = `
+  <section class="player w${d.w}" aria-live="polite">
+    <p class="eyebrow" id="pl-step"></p>
+    <h2 id="pl-label"></h2>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 120 120" class="ring" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+        <circle cx="60" cy="60" r="52" class="ring-fg" id="pl-ring" stroke-dasharray="326.7" stroke-dashoffset="0"></circle>
+      </svg>
+      <div class="ring-num" id="pl-num"></div>
+    </div>
+    <div class="bar"><span id="pl-bar"></span></div>
+    <p class="pl-text" id="pl-text"></p>
+    <div class="pl-actions">
+      <button class="btn big" id="pl-pause" data-act="pause">${t().pause}</button>
+      <button class="btn danger big" data-act="stop">${t().stop}</button>
+    </div>
+  </section>`;
+}
+
+function setPlayer(label, stepIdx, total, text) {
+  $(`#pl-label`).textContent = t()[label] || label;
+  $(`#pl-step`).textContent = t().stepOf(stepIdx + 1, total);
+  $(`#pl-bar`).style.width = `${Math.round(((stepIdx + 1) / total) * 100)}%`;
+  $(`#pl-text`).textContent = S.showText ? (text || ``) : ``;
+}
+
+function setRing(frac, num) {
+  const r = $(`#pl-ring`); if (r) r.style.strokeDashoffset = String(326.7 * (1 - frac));
+  const n = $(`#pl-num`); if (n) n.textContent = num === `` ? `` : String(num);
+}
+
+async function holdWhilePaused(tok) { while (P && P.token === tok && P.paused) await sleep(150); }
+
+async function runDay(dayNum) {
+  if (!(`speechSynthesis` in window)) { alert_(t().noSpeech); return; }
+  const d = DAYS.find(x => x.n === dayNum);
+  const steps = buildSteps(d, S.lang);
+  const tok = Date.now();
+  P = { token: tok, running: true, paused: false, day: d };
+  try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(``)); } catch (e) { /* unlock attempt */ }
+  unlockAudio();
+  beep(1, 10);
+  lockScreen();
+  renderPlayer(d);
+
+  for (let i = 0; i < steps.length; i++) {
+    if (!P || P.token !== tok) return;
+    const st = steps[i];
+    await holdWhilePaused(tok);
+    if (!P || P.token !== tok) return;
+
+    if (st.kind === `say`) {
+      setPlayer(st.label, i, steps.length, st.text);
+      setRing(1, ``);
+      for (const c of chunksOf(st.text)) {
+        await holdWhilePaused(tok);
+        if (!P || P.token !== tok) return;
+        await utter(c, isHe(c) ? `he-IL` : `en-US`);
+      }
+    } else {
+      const quiet = st.quiet;
+      setPlayer(quiet ? `breath` : `turn`, i, steps.length, ``);
+      if (!quiet) beep(880, 160);
+      const total = st.sec * 1000;
+      let left = total;
+      while (left > 0) {
+        if (!P || P.token !== tok) return;
+        await sleep(200);
+        if (!P.paused) left -= 200;
+        setRing(left / total, Math.max(0, Math.ceil(left / 1000)));
+      }
+      if (!quiet) beep(520, 240);
+    }
+  }
+  finishRun(d);
+}
+
+function alert_(msg) { app.insertAdjacentHTML(`afterbegin`, `<p class="notice" role="alert">${msg}</p>`); }
+
+function finishRun(d) {
+  if (P) P.running = false;
+  unlockScreen();
+  const rec = S.days[d.n] || {};
+  rec.done = true; rec.ts = Date.now(); S.days[d.n] = rec; save();
+  P = null;
+  view = { name: `review`, day: d.n, tmp: null };
+  render();
+}
+
+function stopRun() {
+  try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  unlockScreen();
+  const d = P && P.day;
+  P = null;
+  view = d ? { name: `day`, day: d.n } : { name: `home` };
+  render();
+}
+
+async function runTest() {
+  const out = $(`#testout`);
+  if (!(`speechSynthesis` in window)) { out.textContent = t().noSpeech; return; }
+  out.textContent = t().testing;
+  unlockAudio();
+  try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  beep(880, 250);
+  lastSpeechStarted = false;
+  const voices = (speechSynthesis.getVoices() || []).length;
+  await utter(S.lang === `he` ? `בדיקה. אם אתה שומע אותי, הכול תקין.` : `Test. If you can hear me, everything works.`, S.lang === `he` ? `he-IL` : `en-US`);
+  releaseAudio();
+  out.textContent = lastSpeechStarted ? t().testOk : `${t().silent} (voices: ${voices})`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener(`click`, (e) => {
+  const el = e.target.closest(`[data-act]`); if (!el) return;
+  const act = el.dataset.act;
+  if (act === `lang`) { S.lang = el.dataset.lang; save(); render(); }
+  else if (act === `open`) { view = { name: `day`, day: Number(el.dataset.day) }; render(); }
+  else if (act === `home`) { view = { name: `home` }; render(); }
+  else if (act === `start`) { runDay(Number(el.dataset.day)); }
+  else if (act === `review`) { view = { name: `review`, day: Number(el.dataset.day), tmp: null }; render(); }
+  else if (act === `rate`) { view.tmp[Number(el.dataset.ax)] = Number(el.dataset.v); renderReview(); }
+  else if (act === `saveReview`) {
+    const n = Number(el.dataset.day);
+    const rec = S.days[n] || {}; rec.ratings = view.tmp.slice(); rec.done = true; S.days[n] = rec; save();
+    view = { name: `home` }; render();
+  }
+  else if (act === `pause`) {
+    if (!P) return;
+    P.paused = !P.paused;
+    try { if (P.paused) speechSynthesis.pause(); else speechSynthesis.resume(); } catch (err) { /* ignore */ }
+    el.textContent = P.paused ? t().resume : t().pause;
+  }
+  else if (act === `stop`) { stopRun(); }
+  else if (act === `test`) { runTest(); }
+});
+
+document.addEventListener(`change`, (e) => {
+  if (e.target && e.target.id === `showText`) { S.showText = e.target.checked; save(); }
+});
+
+if (`speechSynthesis` in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch (e) { /* ignore */ } }
+try { if (`serviceWorker` in navigator && location.protocol === `https:` && !location.hostname.endsWith(`claude.ai`)) navigator.serviceWorker.register(`sw.js`); } catch (e) { /* not available here */ }
+
+render();
+
+</script>
+</body>
+</html>
