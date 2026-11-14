@@ -137,7 +137,10 @@ const TXT = {
     focus: `נקודה לתשומת לב. `,
     phrase: `המשפט של היום. אמור אותו פעמיים, בקול ברור. `,
     close: `המושב הסתיים. כשתחנה, פתח את האפליקציה ודרג את עצמך במבנה, במסירה ובעמידות. עבודה טובה.`,
-    qaIntro: `חמש שאלות מהירות. אקריא כל שאלה, ואחריה יש לך שלושים שניות לענות.`
+    qaIntro: `חמש שאלות מהירות. אקריא כל שאלה, ואחריה יש לך שלושים שניות לענות.`,
+    weakIntro: `לפני התרגיל, שמע דוגמה. קודם גרסה חלשה. `,
+    strongIntro: `ועכשיו אותה הודעה בגרסה חזקה. `,
+    modelIntro: `הנה דוגמה לתשובה לתרגיל הראשון. שמע, והשווה לעצמך. `
   },
   en: {
     intro: (n, t) => `Day ${n}. ${t}. Eyes on the road. This session is audio only, and you do not need to touch the screen. When you park, you can rate yourself.`,
@@ -150,7 +153,10 @@ const TXT = {
     focus: `One thing to notice. `,
     phrase: `Today's phrase. Say it twice, clearly. `,
     close: `Session complete. When you have parked, open the app and rate yourself on structure, delivery and composure. Good work.`,
-    qaIntro: `Five rapid questions. I will read each one, and you have thirty seconds to answer.`
+    qaIntro: `Five rapid questions. I will read each one, and you have thirty seconds to answer.`,
+    weakIntro: `Before the drill, hear an example. First, the weak version. `,
+    strongIntro: `And now the same message, in a strong version. `,
+    modelIntro: `Here is a model answer to the first drill. Listen, and compare it to yours. `
   }
 };
 
@@ -462,13 +468,181 @@ const DAYS = [
       phrase: `Thank you. I welcome your questions.` } }
 ];
 
+/* Teaching examples. weak/strong: the same message said badly and well. model: a sample answer to drill A.
+   [[p]] marks a deliberate silent pause of about a second. */
+const EXAMPLES = {
+  1: { he: {
+      weak: `יש לנו כמה דברים שקרו בחודש האחרון בהכשרות. התחלנו לבדוק את הנושא, ודיברנו עם כמה גורמים, ויש שם בעיות שונות, ובסוף אני חושב שאולי כדאי לשקול לעדכן את התוכנית.`,
+      strong: `אני ממליץ לעדכן את תוכנית ההכשרה עד סוף החודש, ואני צריך את אישורך היום. הסיבה: שלושה מתוך ארבעה מסלולים לא עומדים ביעדים.`,
+      model: `אני ממליץ לדחות את ההשקה בשבועיים, ואני מבקש את אישורך עד יום חמישי. הסיבה העיקרית: שני צוותים עדיין לא מוכנים. אם נשיק עכשיו, נשלם על זה בתקלות.` },
+    en: {
+      weak: `So over the last month a few things have come up in the training pipeline. We started looking into it, spoke to a few people, there are various issues, and eventually I think maybe we should consider updating the plan.`,
+      strong: `I recommend we update the training plan by the end of the month, and I need your approval today. The reason: three of our four tracks are missing their targets.`,
+      model: `I recommend delaying the launch by two weeks, and I need your approval by Thursday. The main reason: two teams are not ready. If we launch now, we will pay for it in failures.` } },
+  2: { he: {
+      weak: `יש הרבה סיבות לעשות את זה. קודם כול זה חוסך זמן, וגם יש שיקולים תקציביים, ובנוסף הצוות רוצה את זה, ויש גם עניין של תדמית, ועוד כמה דברים.`,
+      strong: `יש שלוש סיבות. ראשונה, זמן: זה חוסך שבוע. שנייה, עלות: זה זול בעשרים אחוז. שלישית, הצוות: הוא כבר מוכן.`,
+      model: `אני בעד ההחלטה, משלוש סיבות. ראשונה, מהירות: נחסוך חודש. שנייה, סיכון: אפשר לעצור בכל שלב. שלישית, תמיכה: שני מנהלים כבר הסכימו.` },
+    en: {
+      weak: `There are lots of reasons to do this. It saves time, and there are budget considerations, and the team wants it, and there is an image aspect too, and a few other things.`,
+      strong: `There are three reasons. First, time: it saves a week. Second, cost: it is twenty percent cheaper. Third, the team: it is already ready.`,
+      model: `I support the decision for three reasons. First, speed: we save a month. Second, risk: we can stop at any stage. Third, support: two managers have already agreed.` } },
+  3: { he: {
+      weak: `בשנה האחרונה היו שינויים בתקציב, ואז הוחלפו שניים מראשי הצוותים, ויש גם נתונים על שביעות רצון, ולכן אני חושב שהמצב קצת מורכב.`,
+      strong: `היחידה יציבה אך חשופה. שלושה נימוקים: התקציב מובטח לשנתיים, הצוות החליף הנהגה בהצלחה, ושביעות הרצון עלתה. הנתונים המלאים אצלי, אם תרצה.`,
+      model: `היחידה במצב טוב, עם סיכון אחד. הנימוקים: כוח האדם יציב, התהליכים עובדים, והתקציב מאושר. הסיכון: תלות באדם מפתח אחד. הפרטים זמינים לפי דרישה.` },
+    en: {
+      weak: `Over the last year there were budget changes, then two team leads were replaced, and there is satisfaction data too, so I think the situation is somewhat complex.`,
+      strong: `The unit is stable but exposed. Three reasons: the budget is secured for two years, the team changed leadership successfully, and satisfaction rose. Full data is with me if you want it.`,
+      model: `The unit is in good shape, with one risk. The reasons: staffing is stable, the processes work, and the budget is approved. The risk: dependence on one key person. Details are available on request.` } },
+  4: { he: {
+      weak: `ירידה של עשרה אחוז בהשתתפות. שלושה מרצים חדשים. הפסקת מימון של פרויקט אחד.`,
+      strong: `ירידה של עשרה אחוז בהשתתפות. משמעות הדבר: נפספס את יעד השנה אם לא נפעל עד סוף הרבעון. שלושה מרצים חדשים. משמעות הדבר: נדרש חודש הטמעה.`,
+      model: `ההשתתפות ירדה בעשרה אחוז. משמעות הדבר: היעד השנתי בסיכון. התקציב אושר. משמעות הדבר: אפשר להתחיל לגייס כבר החודש.` },
+    en: {
+      weak: `Participation dropped ten percent. Three new lecturers. Funding for one project stopped.`,
+      strong: `Participation dropped ten percent. Which means we miss the annual target unless we act by quarter end. Three new lecturers. Which means a month of onboarding is needed.`,
+      model: `Participation dropped ten percent. Which means the annual target is at risk. The budget was approved. Which means we can start hiring this month.` } },
+  5: { he: {
+      weak: `אז רציתי לעדכן אותך, כי יש כל מיני עניינים, ואני לא בטוח מאיפה להתחיל, אבל בעצם הכול מתחיל בזה שבחנו את התהליך, ואחר כך ראינו כמה דברים, ובסוף יש עניין אחד שחשוב.`,
+      strong: `תהליך הקליטה איטי מדי. הוא לוקח שישה שבועות במקום ארבעה. אני מציע לבטל שני אישורים מיותרים, ואבקש את אישורך.`,
+      model: `בקצרה: הפרויקט בלוח הזמנים. נשאר סיכון אחד, ספק שעלול לאחר בשבוע. אני מטפל בו, ואעדכן ביום ראשון.` },
+    en: {
+      weak: `So I wanted to update you, because there are various matters, and I am not sure where to start, but basically it all begins with the fact that we examined the process, and then we saw a few things, and in the end there is one important point.`,
+      strong: `Onboarding is too slow. It takes six weeks instead of four. I suggest removing two unnecessary approvals, and I ask for your approval.`,
+      model: `In short: the project is on schedule. One risk remains: a supplier who may slip by a week. I am handling it, and I will update you on Sunday.` } },
+  6: { he: {
+      weak: `המצב דורש החלטה והיא דחופה ואני ממליץ על האפשרות השנייה כי היא זולה יותר ומהירה יותר ויש גם עוד סיבות.`,
+      strong: `המצב דורש החלטה היום.[[p]] יש שתי אפשרויות.[[p]] אני ממליץ על השנייה.[[p]] היא זולה יותר, ומהירה יותר.`,
+      model: `סדר היום מחר הוא פשוט.[[p]] בבוקר, ישיבת צוות.[[p]] בצהריים, פגישה עם הספק.[[p]] ואחר הצהריים, הדבר החשוב ביותר:[[p]] הצגת התוכנית.` },
+    en: {
+      weak: `The situation requires a decision and it is urgent and I recommend the second option because it is cheaper and faster and there are other reasons too.`,
+      strong: `The situation requires a decision today.[[p]] There are two options.[[p]] I recommend the second.[[p]] It is cheaper, and faster.`,
+      model: `Tomorrow's schedule is simple.[[p]] In the morning, a team meeting.[[p]] At noon, a meeting with the supplier.[[p]] And in the afternoon, the most important thing:[[p]] presenting the plan.` } },
+  7: { he: {
+      weak: `אה, אז, כאילו, אנחנו, אה, בעצם התחלנו, כאילו, לבדוק את, אה, הנושא.`,
+      strong: `התחלנו לבדוק את הנושא.[[p]] מצאנו בעיה אחת.[[p]] אנחנו מטפלים בה.`,
+      model: `אתמול סיימתי את הסקירה.[[p]] אחר כך נפגשתי עם הצוות.[[p]] הסכמנו על שלושה צעדים.[[p]] ובערב כתבתי את הסיכום.` },
+    en: {
+      weak: `Um, so, like, we, uh, basically started, you know, to look at the, um, issue.`,
+      strong: `We started looking into the issue.[[p]] We found one problem.[[p]] We are handling it.`,
+      model: `Yesterday I finished the review.[[p]] Then I met with the team.[[p]] We agreed on three steps.[[p]] And in the evening I wrote the summary.` } },
+  8: { he: {
+      weak: `אני חושב שאולי זה יכול להיות רעיון טוב, לא? כאילו, בערך, נראה לי.`,
+      strong: `זה הרעיון הנכון. אני ממליץ עליו.`,
+      model: `הצוות מוכן. התקציב מאושר. הלוח מציאותי. הסיכון נמוך. אני ממליץ להתחיל.` },
+    en: {
+      weak: `I think maybe this could be a good idea, no? Sort of, roughly, it seems to me.`,
+      strong: `This is the right idea. I recommend it.`,
+      model: `The team is ready. The budget is approved. The schedule is realistic. The risk is low. I recommend we start.` } },
+  9: { he: {
+      weak: `הפרויקט די מתקדם, אנחנו בערך באמצע, כנראה נסיים בקרוב, ויש כמה אנשים שעובדים על זה.`,
+      strong: `הפרויקט בשיעור של שישים אחוז. שמונה אנשים עובדים עליו. הסיום מתוכנן לחמישה עשר בדצמבר.`,
+      model: `הפרויקט מנוהל על ידי דנה. שישה אנשים עובדים עליו. הוא נמצא בשלב שני מארבעה, והסיום מתוכנן לעשרים בינואר. התקציב: מאתיים אלף שקל.` },
+    en: {
+      weak: `The project is fairly advanced, we are roughly halfway, we will probably finish soon, and a few people are working on it.`,
+      strong: `The project is sixty percent done. Eight people are working on it. Completion is planned for December fifteenth.`,
+      model: `The project is run by Dana. Six people work on it. It is at stage two of four, and completion is planned for January twentieth. The budget is two hundred thousand shekels.` } },
+  10: { he: {
+      weak: `המערכת מורכבת, יש בה הרבה רכיבים שמשפיעים זה על זה, ולכן קשה לשנות חלק אחד בלי להשפיע על האחרים.`,
+      strong: `המערכת היא כמו מגדל קלפים. אפשר לשנות קלף אחד, אבל רק אם יודעים אילו קלפים נשענים עליו.`,
+      model: `תכנון לטווח ארוך הוא כמו ניווט בלילה. לא רואים את היעד, אבל כוכב אחד קבוע מכוון את כל ההחלטות. הכוכב שלנו הוא היכולת ללמוד.` },
+    en: {
+      weak: `The system is complex, with many components that affect each other, so it is hard to change one part without affecting the others.`,
+      strong: `The system is like a house of cards. You can change one card, but only if you know which cards lean on it.`,
+      model: `Long-term planning is like navigating at night. You cannot see the destination, but one fixed star guides every decision. Our star is the ability to learn.` } },
+  11: { he: {
+      weak: `אה... זו שאלה קשה. אני לא חושב שזה נכון, כי בעצם עשינו הרבה דברים, וזה לא כזה, כאילו, תיאורטי.`,
+      strong: `אתה שואל אם התוכנית ישימה.[[p]] זו שאלה הוגנת. כן, והנה ההוכחה: הפעלנו אותה בשני צוותים, ושניהם עמדו ביעד.`,
+      model: `אתה שואל למה לא עשינו את זה קודם.[[p]] שאלה הוגנת. עד השנה לא היה לנו התקציב ולא הצוות. היום יש את שניהם, ולכן אנחנו מתחילים עכשיו.` },
+    en: {
+      weak: `Uh... that is a hard question. I do not think that is right, because actually we did a lot of things, and it is not so, like, theoretical.`,
+      strong: `You are asking whether the plan is workable.[[p]] That is a fair question. Yes, and here is the proof: we ran it in two teams, and both met the target.`,
+      model: `You are asking why we did not do this earlier.[[p]] Fair question. Until this year we had neither the budget nor the team. Today we have both, so we are starting now.` } },
+  12: { he: {
+      weak: `אה, אני לא יודע. אני לא בטוח. אולי. אני לא יודע, באמת.`,
+      strong: `את זה אין לי עדיין.[[p]] מה שכן ידוע: העלות המשוערת היא מאה אלף. אחזור אליך עם הנתון המדויק עד מחר בצהריים.`,
+      model: `את מספר המשתתפים המדויק אין לי כרגע. מה שידוע: נרשמו ארבעים, ומשוער שיגיעו שלושים וחמישה. אחזור אליך עד מחר בצהריים.` },
+    en: {
+      weak: `Uh, I do not know. I am not sure. Maybe. I really do not know.`,
+      strong: `I do not have that yet.[[p]] What is known: the estimated cost is one hundred thousand. I will come back to you with the exact figure by tomorrow noon.`,
+      model: `I do not have the exact number of participants right now. What is known: forty registered, and about thirty-five are expected. I will come back to you by tomorrow noon.` } },
+  13: { he: {
+      weak: `אז אני רוצה להגיד ש... כן, אבל... רגע, סליחה, לא התכוונתי, סליחה, איפה הייתי? אה...`,
+      strong: `אסיים את הנקודה, ואז אשמח לשמוע אותך.[[p]] הנקודה האחרונה: אנחנו צריכים אישור עד יום חמישי. עכשיו, אשמח לשמוע.`,
+      model: `בבקשה, תשלים.[[p]] הבנתי. אני חוזר לנקודה: הלוח מציאותי, ואני צריך אישור עד יום חמישי.` },
+    en: {
+      weak: `So I want to say that... yes, but... wait, sorry, I did not mean to, sorry, where was I? Uh...`,
+      strong: `Let me finish this point, and then I will gladly hear you.[[p]] The last point: we need approval by Thursday. Now, I would be glad to hear you.`,
+      model: `Please, go ahead.[[p]] Understood. I will return to the point: the schedule is realistic, and I need approval by Thursday.` } },
+  14: { he: {
+      weak: `לא, אבל זה לא נכון, אנחנו כן אחראים, בגלל ש... אבל אתה לא מבין.`,
+      strong: `יש בזה משהו נכון: הנושא לא בסמכותנו הפורמלית. ועם זאת, התוצאה משפיעה עלינו ישירות, ולכן אנחנו מובילים אותו.`,
+      model: `יש בזה משהו נכון: ההנחה אופטימית. ועם זאת, בנינו בה מרווח של עשרים אחוז, ולכן היא עדיין עומדת.` },
+    en: {
+      weak: `No, but that is not true, we are responsible, because... but you do not understand.`,
+      strong: `There is something right in that: the issue is not formally in our authority. At the same time, the result affects us directly, so we lead it.`,
+      model: `There is something right in that: the assumption is optimistic. At the same time, we built in a twenty percent margin, so it still holds.` } },
+  15: { he: {
+      weak: `אני ממש מצטער, זה נורא, לא ידענו, אנחנו מתנצלים מאוד, ויש גם בעיה קטנה, אולי כדאי שתשב.`,
+      strong: `המערכת נפלה הבוקר. ההשפעה: מאה משתמשים לא יכלו לעבוד שעתיים. אנחנו מתקנים, ונסיים עד הערב. אני צריך אישור להקצות שני אנשים נוספים.`,
+      model: `הספק לא עמד במועד. ההשפעה: איחור של שבוע בהשקה. אנחנו עוברים לספק חלופי, והוא כבר אושר. אני צריך את אישורך לתקציב נוסף.` },
+    en: {
+      weak: `I am so sorry, this is terrible, we did not know, we apologize so much, and there is also a small problem, maybe you should sit down.`,
+      strong: `The system went down this morning. The impact: one hundred users could not work for two hours. We are fixing it, and we will finish by tonight. I need approval to assign two more people.`,
+      model: `The supplier missed the deadline. The impact: a one-week delay in launch. We are switching to an alternative supplier, already approved. I need your approval for extra budget.` } },
+  16: { he: {
+      weak: `רציתי לספר לך על התוכנית. יש בה הרבה חלקים, ואנחנו עובדים עליה זמן, ויש כמה אתגרים, וצריך לחשוב על זה.`,
+      strong: `אני ממליץ לאשר את תוכנית השינוי. שלוש נקודות: ראשונה, היא מקצרת את ההכשרה בשליש. שנייה, היא עולה פחות. שלישית, היא ניתנת לעצירה בכל שלב. משמעות הדבר: חיסכון של חצי שנה. אני מבקש אישור עד סוף החודש.`,
+      model: `אני ממליץ לאשר את תוכנית השינוי, ואני מבקש החלטה עד סוף החודש. שלוש נקודות. ראשונה, מהירות: ההכשרה מתקצרת בשליש. שנייה, איכות: המשוב מתקבל תוך יום ולא תוך שבוע. שלישית, סיכון: אפשר לעצור בכל שלב. משמעות הדבר: חיסכון של חצי שנה ושיפור ביכולת הלמידה. אשמח לשאלות.` },
+    en: {
+      weak: `I wanted to tell you about the plan. It has many parts, and we have been working on it for a while, and there are some challenges, and we need to think about it.`,
+      strong: `I recommend approving the change plan. Three points. First, it shortens training by a third. Second, it costs less. Third, it can be stopped at any stage. Which means half a year saved. I ask for approval by the end of the month.`,
+      model: `I recommend approving the change plan, and I ask for a decision by the end of the month. Three points. First, speed: training is shortened by a third. Second, quality: feedback arrives in a day, not a week. Third, risk: we can stop at any stage. Which means half a year saved and a stronger ability to learn. I welcome your questions.` } },
+  17: (() => { const e = {
+      weak: `So, um, I wanted to talk about, you know, the budget, and there are many things, and we should maybe look at it.`,
+      strong: `The bottom line: we should approve the budget. Three reasons. First, it is within limits. Second, it saves time. Third, the team is ready.`,
+      model: `Let me start with the bottom line. I recommend approving the training budget. Three reasons. First, it fits the limits. Second, it saves two months. Third, the team is ready to start. Which means we can begin in January.` };
+    return { he: e, en: e }; })(),
+  18: { he: {
+      weak: `למה דווקא עכשיו? אה, זו שאלה טובה, יש הרבה סיבות, אתחיל מרקע, לפני שנה...`,
+      strong: `למה דווקא עכשיו? כי החלון נסגר בסוף הרבעון. הסיבה: התקציב מאושר רק עד אז.`,
+      model: `הסיכון הגדול ביותר הוא עיכוב בגיוס. הסיבה: שוק העבודה צפוף. לכן התחלנו בגיוס מוקדם.` },
+    en: {
+      weak: `Why now? Uh, that is a good question, there are many reasons, let me start with background, a year ago...`,
+      strong: `Why now? Because the window closes at quarter end. The reason: the budget is approved only until then.`,
+      model: `The biggest risk is a hiring delay. The reason: the labor market is tight. So we started recruiting early.` } },
+  19: { he: {
+      weak: `אנחנו עוסקים בפיתוח יכולות ארגוניות באמצעות מנגנוני למידה מתמשכים לצורך שיפור יעילות מערכתית.`,
+      strong: `אנחנו מלמדים אנשים ללמוד מהר יותר. כמו שקבוצה מתאמנת לפני משחק, כך גם ארגון. התוצאה: פחות טעויות, ותגובה מהירה יותר.`,
+      model: `בלשון פשוטה, אנחנו עוזרים לארגון לא לחזור על אותן טעויות. דמיינו משפחה שמתכננת טיול: בכל שנה היא לומדת מה שכחה בפעם הקודמת. זה בדיוק מה שאנחנו עושים, בקנה מידה גדול.` },
+    en: {
+      weak: `We are engaged in developing organizational capabilities through continuous learning mechanisms for the purpose of improving systemic efficiency.`,
+      strong: `We teach people to learn faster. Like a team practicing before a game, so does an organization. The result: fewer mistakes, and faster response.`,
+      model: `In plain terms, we help an organization avoid repeating the same mistakes. Imagine a family planning a trip: each year it learns what it forgot last time. That is exactly what we do, at large scale.` } },
+  20: { he: {
+      weak: `אז הייתי רוצה לדבר על כל מה שעשינו, זה היה הרבה, ויש הרבה נקודות, ואני אנסה לעבור על הכול.`,
+      strong: `אני ממליץ להמשיך בתוכנית, ואני מבקש החלטה היום. שלוש נקודות: ראשונה, התוצאות. שנייה, העלות. שלישית, הסיכון. משמעות הדבר: חיסכון, ולא עיכוב.`,
+      model: `אני ממליץ להרחיב את התוכנית לכל היחידות, ואני מבקש החלטה עד סוף החודש. שלוש נקודות. ראשונה, תוצאות: עמידה ביעד בשני מקרים מתוך שניים. שנייה, עלות: נמוכה מהצפוי. שלישית, סיכון: ניתן לעצירה. משמעות הדבר: התרחבות בלי הימור. תודה. אשמח לשאלות.` },
+    en: {
+      weak: `So I would like to talk about everything we did, it was a lot, and there are many points, and I will try to go through all of it.`,
+      strong: `I recommend continuing the program, and I ask for a decision today. Three points: first, the results. Second, the cost. Third, the risk. Which means savings, not delay.`,
+      model: `I recommend extending the program to all units, and I ask for a decision by the end of the month. Three points. First, results: the target was met in two cases out of two. Second, cost: lower than expected. Third, risk: it can be stopped. Which means expansion without gambling. Thank you. I welcome your questions.` } }
+};
+
 /* Build the ordered step list for a day in a given guide language. */
 function buildSteps(day, L) {
   const T = TXT[L];
   const d = day[L];
   const secs = day.secs || [150, 180, 120];
   const steps = [];
-  const say = (text, label) => steps.push({ kind: `say`, text, label: label || `listen` });
+  const say = (text, label) => {
+    text.split(`[[p]]`).forEach((part, i) => {
+      if (i > 0) steps.push({ kind: `gap`, sec: 1.3 });
+      if (part.trim()) steps.push({ kind: `say`, text: part.trim(), label: label || `listen` });
+    });
+  };
+  const ex = EXAMPLES[day.n][L];
   const turn = (sec, label) => steps.push({ kind: `turn`, sec, label: label || `turn` });
 
   say(T.intro(day.n, d.title), `intro`);
@@ -478,6 +652,9 @@ function buildSteps(day, L) {
     say(T.exhale, `breath`); steps.push({ kind: `breath`, sec: 6, label: `breath`, quiet: true });
   }
   say(d.concept, `concept`);
+  say(T.weakIntro + ex.weak, `example`);
+  steps.push({ kind: `gap`, sec: 1.5 });
+  say(T.strongIntro + ex.strong, `example`);
 
   say(T.drillA, `drill`);
   say(d.a, `drill`);
@@ -486,6 +663,7 @@ function buildSteps(day, L) {
   } else {
     turn(secs[0]);
   }
+  say(T.modelIntro + ex.model, `model`);
   say(T.focus + d.focus, `notice`);
 
   say(T.drillB, `drill`);
@@ -518,7 +696,7 @@ const UI = {
     safety: `מפעילים לפני שיוצאים לדרך. אין לגעת במסך בזמן נהיגה. המושב כולו בקול.`,
     guide: `שפת ההנחיה`, program: `התוכנית`, week: `שבוע`, day: `יום`,
     stop: `עצור`, pause: `השהה`, resume: `המשך`, listen: `מקשיב`, turn: `תורך`, breath: `נשימה`,
-    intro: `פתיחה`, concept: `עיקרון`, drill: `תרגיל`, notice: `שים לב`, phrase: `משפט היום`, close: `סיום`,
+    intro: `פתיחה`, concept: `עיקרון`, example: `דוגמה`, model: `תשובה לדוגמה`, drill: `תרגיל`, notice: `שים לב`, phrase: `משפט היום`, close: `סיום`,
     review: `הערכה אחרי החניה`, reviewHint: `דרג את המושב שסיימת, מ-1 עד 5.`,
     axes: [`מבנה`, `מסירה`, `עמידות`], save: `שמור`, saved: `נשמר`, skip: `דלג`,
     back: `חזרה`, script: `קרא את התסריט (בחניה בלבד)`, showText: `הצג טקסט בזמן המושב (בחניה בלבד)`,
@@ -534,7 +712,7 @@ const UI = {
     safety: `Start before you set off. Do not touch the screen while driving. The session runs entirely by voice.`,
     guide: `Guide language`, program: `Program`, week: `Week`, day: `Day`,
     stop: `Stop`, pause: `Pause`, resume: `Resume`, listen: `Listen`, turn: `Your turn`, breath: `Breathe`,
-    intro: `Intro`, concept: `Principle`, drill: `Drill`, notice: `Notice`, phrase: `Phrase of the day`, close: `Wrap-up`,
+    intro: `Intro`, concept: `Principle`, example: `Example`, model: `Model answer`, drill: `Drill`, notice: `Notice`, phrase: `Phrase of the day`, close: `Wrap-up`,
     review: `Rate it once you are parked`, reviewHint: `Rate the session you just finished, from 1 to 5.`,
     axes: [`Structure`, `Delivery`, `Composure`], save: `Save`, saved: `Saved`, skip: `Skip`,
     back: `Back`, script: `Read the script (parked only)`, showText: `Show text during the session (parked only)`,
@@ -804,6 +982,11 @@ async function runDay(dayNum) {
     await holdWhilePaused(tok);
     if (!P || P.token !== tok) return;
 
+    if (st.kind === `gap`) {
+      let g = st.sec * 1000;
+      while (g > 0) { if (!P || P.token !== tok) return; await sleep(100); if (!P.paused) g -= 100; }
+      continue;
+    }
     if (st.kind === `say`) {
       setPlayer(st.label, i, steps.length, st.text);
       setRing(1, ``);
