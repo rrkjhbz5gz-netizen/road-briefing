@@ -525,7 +525,7 @@ const UI = {
     minutes: `דק׳`, done: `הושלם`, avg: `ממוצע`, noSpeech: `הדפדפן הזה לא תומך בהקראה. פתח את הדף ב-Safari.`,
     stepOf: (i, n) => `שלב ${i} מתוך ${n}`, sessionDone: `המושב הסתיים`,
     wake: `המסך נשאר דלוק בזמן המושב כדי שההקראה לא תיפסק.`,
-    test: `בדיקת צליל`, testing: `מנגן...`, testOk: `אם שמעת צפצוף ומשפט, הכול תקין.`,
+    test: `בדיקת צליל`, plainHe: `בדיקה פשוטה: עברית`, plainEn: `בדיקה פשוטה: English`, testing: `מנגן...`, testOk: `אם שמעת צפצוף ומשפט, הכול תקין.`,
     silent: `לא זוהה קול. בדוק: מתג השקט בצד האייפון, עוצמת המדיה, ו-Bluetooth. אם עדיין אין קול, פתח את הדף ישירות ב-Safari ולא בתוך אפליקציית Claude.`
   },
   en: {
@@ -541,7 +541,7 @@ const UI = {
     minutes: `min`, done: `Done`, avg: `Average`, noSpeech: `This browser cannot read text aloud. Open the page in Safari.`,
     stepOf: (i, n) => `Step ${i} of ${n}`, sessionDone: `Session complete`,
     wake: `The screen stays on during the session so the voice does not cut out.`,
-    test: `Test sound`, testing: `Playing...`, testOk: `If you heard a beep and a sentence, everything works.`,
+    test: `Test sound`, plainHe: `Plain test: Hebrew`, plainEn: `Plain test: English`, testing: `Playing...`, testOk: `If you heard a beep and a sentence, everything works.`,
     silent: `No voice detected. Check the silent switch on the side of the iPhone, the media volume, and Bluetooth. If there is still no sound, open the page directly in Safari instead of inside the Claude app.`
   }
 };
@@ -622,7 +622,9 @@ function renderHome() {
       </div>`).join(``)}
   </section>
 
-  <div class="testbox"><button class="btn" data-act="test">${t().test}</button><p id="testout" class="foot"></p></div>
+  <div class="testbox"><button class="btn" data-act="test">${t().test}</button>
+    <button class="btn" data-act="plain" data-lang="he-IL">${t().plainHe}</button>
+    <button class="btn" data-act="plain" data-lang="en-US">${t().plainEn}</button><p id="testout" class="foot"></p></div>
   <label class="check"><input type="checkbox" id="showText" ${S.showText ? `checked` : ``}> <span>${t().showText}</span></label>
   <p class="foot">${t().wake}</p>`;
 }
@@ -790,7 +792,7 @@ async function runDay(dayNum) {
   const steps = buildSteps(d, S.lang);
   const tok = Date.now();
   P = { token: tok, running: true, paused: false, day: d };
-  try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(``)); } catch (e) { /* unlock attempt */ }
+  try { if (speechSynthesis.speaking) speechSynthesis.cancel(); } catch (e) { /* ignore */ }
   unlockAudio();
   beep(1, 10);
   lockScreen();
@@ -854,13 +856,35 @@ async function runTest() {
   if (!(`speechSynthesis` in window)) { out.textContent = t().noSpeech; return; }
   out.textContent = t().testing;
   unlockAudio();
-  try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  try { if (speechSynthesis.speaking) speechSynthesis.cancel(); } catch (e) { /* ignore */ }
   beep(880, 250);
   lastSpeechStarted = false;
-  const voices = (speechSynthesis.getVoices() || []).length;
+  const vl = speechSynthesis.getVoices() || [];
+  const voices = `${vl.length}, Hebrew: ${vl.some(x => (x.lang || ``).toLowerCase().startsWith(`he`)) ? `yes` : `no`}`;
   await utter(S.lang === `he` ? `בדיקה. אם אתה שומע אותי, הכול תקין.` : `Test. If you can hear me, everything works.`, S.lang === `he` ? `he-IL` : `en-US`);
   releaseAudio();
-  out.textContent = lastSpeechStarted ? t().testOk : `${t().silent} (voices: ${voices})`;
+  out.textContent = lastSpeechStarted ? `${t().testOk} (voices: ${voices})` : `${t().silent} (voices: ${voices})`;
+}
+
+/* Bare test: no beep, no audio session, no voice selection. Reports every event. */
+function plainTest(lang) {
+  const out = $(`#testout`);
+  const log = [];
+  const show = () => { out.textContent = log.join(` | `); };
+  try {
+    const vs = speechSynthesis.getVoices() || [];
+    log.push(`voices ${vs.length}`);
+    log.push(`speaking ${speechSynthesis.speaking}`);
+    const u = new SpeechSynthesisUtterance(lang.startsWith(`he`) ? `שלום. זו בדיקה.` : `Hello. This is a test.`);
+    u.lang = lang;
+    u.onstart = () => { log.push(`start`); show(); };
+    u.onend = () => { log.push(`end`); show(); };
+    u.onerror = (ev) => { log.push(`error ${ev && ev.error}`); show(); };
+    speechSynthesis.speak(u);
+    log.push(`queued`);
+    setTimeout(() => { if (!log.includes(`start`)) { log.push(`no start after 3s`); show(); } }, 3000);
+  } catch (e) { log.push(`exception ${e && e.message}`); }
+  show();
 }
 
 /* ---------- events ---------- */
@@ -886,6 +910,7 @@ document.addEventListener(`click`, (e) => {
   }
   else if (act === `stop`) { stopRun(); }
   else if (act === `test`) { runTest(); }
+  else if (act === `plain`) { plainTest(el.dataset.lang); }
 });
 
 document.addEventListener(`change`, (e) => {
